@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkers Game - Options</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="options-container">
+    <header class="options-header">
+      <button class="back-btn" onclick="window.location.href='/'">← Back to Menu</button>
+      <h1>Options</h1>
+    </header>
+
+    <main class="options-content">
+      <div class="option-section">
+        <h2>Game Settings</h2>
+        
+        <div class="option-item">
+          <label for="game-mode">Game Mode:</label>
+          <select id="game-mode">
+            <option value="ai">Play vs AI</option>
+            <option value="human">Play vs Human</option>
+          </select>
+        </div>
+        
+        <div class="option-item">
+          <label for="board-size">Board Size:</label>
+          <select id="board-size">
+            <option value="8">8x8 (Standard)</option>
+            <option value="10">10x10 (International)</option>
+          </select>
+        </div>
+
+        <div class="option-item">
+          <label for="difficulty">AI Difficulty:</label>
+          <select id="difficulty">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+
+        <div class="option-item">
+          <label for="sound-toggle">Sound Effects:</label>
+          <input type="checkbox" id="sound-toggle" checked>
+        </div>
+
+        <div class="option-item">
+          <label for="music-toggle">Background Music:</label>
+          <input type="checkbox" id="music-toggle">
+        </div>
+      </div>
+
+      <div class="option-section">
+        <h2>Visual Settings</h2>
+        
+        <div class="option-item">
+          <label for="theme-selector">Theme:</label>
+          <select id="theme-selector">
+            <option value="default">Default (Teal/Green)</option>
+            <option value="classic">Classic (Blue/Purple)</option>
+            <option value="dark">Dark Mode</option>
+            <option value="nature">Nature (Brown/Green)</option>
+          </select>
+        </div>
+
+        <div class="option-item">
+          <label for="animation-speed">Animation Speed:</label>
+          <select id="animation-speed">
+            <option value="fast">Fast</option>
+            <option value="normal" selected>Normal</option>
+            <option value="slow">Slow</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="option-section">
+        <h2>Game Rules</h2>
+        
+        <div class="option-item">
+          <label for="forced-captures">Forced Captures:</label>
+          <input type="checkbox" id="forced-captures" checked>
+        </div>
+
+        <div class="option-item">
+          <label for="king-moves">King Moves:</label>
+          <select id="king-moves">
+            <option value="unlimited">Unlimited</option>
+            <option value="limited">Limited</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="options-buttons">
+        <button class="save-btn" onclick="saveOptions()">Save Options</button>
+        <button class="reset-btn" onclick="resetOptions()">Reset to Default</button>
+      </div>
+    </main>
+
+    <footer class="options-footer">
+      <p>Checkers Game &copy; <span id="year"></span></p>
+    </footer>
+  </div>
+
+  <script>
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+    // Save options function
+    function saveOptions() {
+      const options = {
+        gameMode: document.getElementById('game-mode').value,
+        boardSize: document.getElementById('board-size').value,
+        difficulty: document.getElementById('difficulty').value,
+        soundEffects: document.getElementById('sound-toggle').checked,
+        backgroundMusic: document.getElementById('music-toggle').checked,
+        theme: document.getElementById('theme-selector').value,
+        animationSpeed: document.getElementById('animation-speed').value,
+        forcedCaptures: document.getElementById('forced-captures').checked,
+        kingMoves: document.getElementById('king-moves').value
+      };
+      
+      localStorage.setItem('checkersOptions', JSON.stringify(options));
+      alert('Options saved successfully!');
+    }
+    
+    // Reset options function
+    function resetOptions() {
+      if (confirm('Are you sure you want to reset all options to default?')) {
+        document.getElementById('game-mode').value = 'ai';
+        document.getElementById('board-size').value = '8';
+        document.getElementById('difficulty').value = 'easy';
+        document.getElementById('sound-toggle').checked = true;
+        document.getElementById('music-toggle').checked = false;
+        document.getElementById('theme-selector').value = 'default';
+        document.getElementById('animation-speed').value = 'normal';
+        document.getElementById('forced-captures').checked = true;
+        document.getElementById('king-moves').value = 'unlimited';
+        
+        localStorage.removeItem('checkersOptions');
+        alert('Options reset to default!');
+      }
+    }
+    
+    // Load saved options on page load
+    window.addEventListener('load', function() {
+      const savedOptions = localStorage.getItem('checkersOptions');
+      if (savedOptions) {
+        const options = JSON.parse(savedOptions);
+        document.getElementById('game-mode').value = options.gameMode || 'ai';
+        document.getElementById('board-size').value = options.boardSize || '8';
+        document.getElementById('difficulty').value = options.difficulty || 'easy';
+        document.getElementById('sound-toggle').checked = options.soundEffects !== false;
+        document.getElementById('music-toggle').checked = options.backgroundMusic || false;
+        document.getElementById('theme-selector').value = options.theme || 'default';
+        document.getElementById('animation-speed').value = options.animationSpeed || 'normal';
+        document.getElementById('forced-captures').checked = options.forcedCaptures !== false;
+        document.getElementById('king-moves').value = options.kingMoves || 'unlimited';
+      }
+    });
+
+    // Apply saved theme to body on page load
+    (function() {
+      const savedOptions = localStorage.getItem('checkersOptions');
+      if (savedOptions) {
+        const options = JSON.parse(savedOptions);
+        if (options.theme && options.theme !== 'default') {
+          document.body.classList.add('theme-' + options.theme);
+        }
+      }
+    })();
+  </script>
+</body>
+</html> 

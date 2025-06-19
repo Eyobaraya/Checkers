@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkers Game - Home</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="home-container">
+    <div class="home-content">
+      <header class="home-header">
+        <h1 class="home-title">Checkers</h1>
+        <p class="home-subtitle">Classic Board Game</p>
+      </header>
+
+      <nav class="menu">
+        <div class="menu-item" onclick="showGameModeModal()">
+          <div class="menu-icon">🎮</div>
+          <span>New Game</span>
+        </div>
+        
+        <div class="menu-item" onclick="window.location.href='/options'">
+          <div class="menu-icon">⚙️</div>
+          <span>Options</span>
+        </div>
+        
+        <div class="menu-item" onclick="exitGame()">
+          <div class="menu-icon">🚪</div>
+          <span>Exit</span>
+        </div>
+      </nav>
+
+      <footer class="home-footer">
+        <p>Checkers Game &copy; <span id="year"></span></p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Game Mode Selection Modal -->
+  <div id="game-mode-modal" class="modal">
+    <div class="modal-content game-mode-modal">
+      <h2>Choose Game Mode</h2>
+      <p>Select your opponent:</p>
+      
+      <div class="game-mode-options">
+        <div class="mode-option" onclick="startGame('ai')">
+          <div class="mode-icon">🤖</div>
+          <div class="mode-info">
+            <h3>Play vs AI</h3>
+            <p>Challenge the computer</p>
+          </div>
+        </div>
+        
+        <div class="mode-option" onclick="startGame('human')">
+          <div class="mode-icon">👥</div>
+          <div class="mode-info">
+            <h3>Play vs Human</h3>
+            <p>Two-player mode</p>
+          </div>
+        </div>
+      </div>
+      
+      <button class="modal-close-btn" onclick="hideGameModeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+    // Show game mode selection modal
+    function showGameModeModal() {
+      document.getElementById('game-mode-modal').style.display = 'flex';
+    }
+    
+    // Hide game mode selection modal
+    function hideGameModeModal() {
+      document.getElementById('game-mode-modal').style.display = 'none';
+    }
+    
+    // Start game with selected mode
+    function startGame(mode) {
+      // Save the game mode to localStorage
+      const currentOptions = JSON.parse(localStorage.getItem('checkersOptions') || '{}');
+      currentOptions.gameMode = mode;
+      localStorage.setItem('checkersOptions', JSON.stringify(currentOptions));
+      
+      // Navigate to game page
+      window.location.href = '/game';
+    }
+    
+    // Exit game function
+    function exitGame() {
+      if (confirm('Are you sure you want to exit?')) {
+        window.close();
+        // Fallback for browsers that don't support window.close()
+        window.location.href = 'about:blank';
+      }
+    }
+
+    // Apply saved theme to body on page load
+    (function() {
+      const savedOptions = localStorage.getItem('checkersOptions');
+      if (savedOptions) {
+        const options = JSON.parse(savedOptions);
+        if (options.theme && options.theme !== 'default') {
+          document.body.classList.add('theme-' + options.theme);
+        }
+      }
+    })();
+  </script>
+</body>
+</html> 

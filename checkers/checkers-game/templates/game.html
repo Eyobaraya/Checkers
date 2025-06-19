@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkers Game</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="game-container">
+    <header>
+      <div class="header-top">
+        <button class="back-btn" onclick="window.location.href='/'">← Back to Menu</button>
+        <h1>Checkers Game</h1>
+        <button class="mode-btn" onclick="showModeChangeModal()" id="mode-btn">🤖 AI</button>
+      </div>
+      <div class="game-info">
+        <div id="current-player">Red's Turn</div>
+        <div id="game-status"></div>
+        <div class="score-container">
+          <span class="score red-score">Red: 0</span>
+          <span class="score black-score">Black: 0</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div id="game-board"></div>
+      
+      <div class="controls">
+        <button id="new-game-btn">New Game</button>
+        <button id="undo-move-btn">Undo Move</button>
+      </div>
+    </main>
+
+    <footer>
+      <p>Checkers Game &copy; <span id="year"></span></p>
+    </footer>
+  </div>
+
+  <!-- Game modal for messages -->
+  <div id="game-modal" class="modal">
+    <div class="modal-content">
+      <h2 id="modal-title">Game Over</h2>
+      <p id="modal-message"></p>
+      <button id="modal-close-btn">Play Again</button>
+    </div>
+  </div>
+
+  <!-- Mode Change Modal -->
+  <div id="mode-change-modal" class="modal">
+    <div class="modal-content game-mode-modal">
+      <h2>Change Game Mode</h2>
+      <p>This will start a new game:</p>
+      
+      <div class="game-mode-options">
+        <div class="mode-option" onclick="changeGameMode('ai')">
+          <div class="mode-icon">🤖</div>
+          <div class="mode-info">
+            <h3>Play vs AI</h3>
+            <p>Challenge the computer</p>
+          </div>
+        </div>
+        
+        <div class="mode-option" onclick="changeGameMode('human')">
+          <div class="mode-icon">👥</div>
+          <div class="mode-info">
+            <h3>Play vs Human</h3>
+            <p>Two-player mode</p>
+          </div>
+        </div>
+      </div>
+      
+      <button class="modal-close-btn" onclick="hideModeChangeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+  <script>
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+    // Show mode change modal
+    function showModeChangeModal() {
+      document.getElementById('mode-change-modal').style.display = 'flex';
+    }
+    
+    // Hide mode change modal
+    function hideModeChangeModal() {
+      document.getElementById('mode-change-modal').style.display = 'none';
+    }
+    
+    // Change game mode
+    function changeGameMode(mode) {
+      // Save the game mode to localStorage
+      const currentOptions = JSON.parse(localStorage.getItem('checkersOptions') || '{}');
+      currentOptions.gameMode = mode;
+      localStorage.setItem('checkersOptions', JSON.stringify(currentOptions));
+      
+      // Update the mode button
+      updateModeButton(mode);
+      
+      // Hide modal
+      hideModeChangeModal();
+      
+      // Start new game
+      if (window.checkersGame) {
+        window.checkersGame.newGame();
+      }
+    }
+    
+    // Update mode button display
+    function updateModeButton(mode) {
+      const modeBtn = document.getElementById('mode-btn');
+      if (mode === 'ai') {
+        modeBtn.textContent = '🤖 AI';
+      } else {
+        modeBtn.textContent = '👥 Human';
+      }
+    }
+    
+    // Initialize mode button on page load
+    window.addEventListener('load', function() {
+      const savedOptions = localStorage.getItem('checkersOptions');
+      if (savedOptions) {
+        const options = JSON.parse(savedOptions);
+        updateModeButton(options.gameMode || 'ai');
+      }
+    });
+  </script>
+</body>
+</html> 
